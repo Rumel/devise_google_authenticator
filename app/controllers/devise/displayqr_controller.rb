@@ -23,11 +23,7 @@ class Devise::DisplayqrController < DeviseController
 
     if resource.set_gauth_enabled(params[resource_name]['gauth_enabled'])
       set_flash_message :notice, (resource.gauth_enabled? ? :enabled : :disabled)
-      if Gem::Version.new(Devise::VERSION) < Gem::Version.new('4.2.0')
-        sign_in scope, resource, bypass: true
-      else
-        bypass_sign_in resource, scope: scope
-      end
+      bypass_sign_in resource, scope: scope
 
       respond_with resource, location: after_sign_in_path_for(resource)
     else
@@ -54,8 +50,6 @@ class Devise::DisplayqrController < DeviseController
   end
 
   def authenticate_scope!
-    # https://github.com/AsteriskLabs/devise_google_authenticator/issues/29
-    send(:"authenticate_#{resource_name}!", force: true)
     self.resource = send("current_#{resource_name}")
   end
 
